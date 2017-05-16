@@ -1,7 +1,7 @@
 App.controller('personManagerController', function($scope, $http) {
     // var urlBase = "http://localhost:8084/CCPOC";
-    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
-    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
+    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     console.log('123');
     $scope.person = {id: null, firstname: '', lastname: '', birthdate: null, amount: null, description: null};
 

@@ -1,7 +1,7 @@
 App.controller('phoneManagerController', function($scope, $http) {
     // var urlBase = "http://localhost:8084/CCPOC";
-    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
-    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
+    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     $scope.phone = {id: null, sfId: '', statename: '', autoNumberName: '', 
                       type: '', phone: ''
                   };

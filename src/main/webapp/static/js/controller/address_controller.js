@@ -1,7 +1,7 @@
 App.controller('addressManagerController', function($scope, $http) {
     // var urlBase = "http://localhost:8084/CCPOC";
-    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
-    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+    //var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/CCPOC';
+    var urlBase = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
     $scope.address = {id: null, sfId: '', statename: '', addressline2: '', 
                       addressline1: '', personId: '',zipCode : '',ownerId :'',
                       autoNumberName : ''
