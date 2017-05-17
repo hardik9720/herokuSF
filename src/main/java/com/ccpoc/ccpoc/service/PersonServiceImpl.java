@@ -40,24 +40,29 @@ public class PersonServiceImpl implements PersonService {
         connection = DBUtility.getConnection();
     }
 
+    public User getLoggedInUser() {
+        User userObj = new User();
+        // check if user is login
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof AnonymousAuthenticationToken)) {
+            UserDetails userDetail = (UserDetails) auth.getPrincipal();
+            System.out.println(userDetail);
+            userObj = userDao.findByUserName(userDetail.getUsername());
+        }
+
+        return userObj;
+    }
+
     @Override
     public List<Person> findAllUsers() {
         List<Person> personList = new ArrayList<Person>();
-        
-        User userObj = new User();
-        try // check if user is login
-        {
-            // check if user is login
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (!(auth instanceof AnonymousAuthenticationToken)) {
-                UserDetails userDetail = (UserDetails) auth.getPrincipal();
-                System.out.println(userDetail);
-                userObj = userDao.findByUserName(userDetail.getUsername());
-            }
-            
-            System.out.println("user Obj sfId"+userObj.getsfId());
+
+        User userObj = getLoggedInUser();
+        try {
+
+            System.out.println("user Obj sfId" + userObj.getsfId());
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from salesforce.person__c where custom_user__c= '"+ userObj.getsfId() +"' ");
+            ResultSet rs = statement.executeQuery("select * from salesforce.person__c where custom_user__c= '" + userObj.getsfId() + "' ");
             while (rs.next()) {
                 Person person = new Person();
                 person.setId(rs.getInt("id"));
@@ -101,6 +106,35 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public void createPerson(Person personObj) {
+        User userObj = getLoggedInUser();
+        System.out.println("person obj "+personObj);
+                
+        try {
+            String insertQuery = "INSERT INTO salesforce.person__c"
+                    + " (full_name__c,startdate__c,first_name__c,last_name__c,birthdate__c,amount__c,description__c,custom_user__c)"
+                    + " VALUES "
+                    + " (?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.setString(1, personObj.getFirstname() + " " + personObj.getLastname());
+            preparedStatement.setDate(2, convertJavaDateToSqlDate(new Date()));
+            preparedStatement.setString(3, personObj.getFirstname());
+            preparedStatement.setString(4, personObj.getLastname());
+            preparedStatement.setDate(5, convertJavaDateToSqlDate(personObj.getBirthdate()));
+            preparedStatement.setDouble(6, personObj.getAmount());
+            preparedStatement.setString(7, personObj.getDescription());
+            preparedStatement.setString(8, userObj.getsfId());
+            preparedStatement .executeUpdate();
+            System.out.println("person created successfully");
+        } catch (SQLException e) {
+            System.out.println("error creating person "+e.getMessage());
+            e.printStackTrace();
+        } catch (ParseException ex) {
+            Logger.getLogger(PersonServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
     public void updatePerson(Person personObj) {
         try {
             System.out.println("Person to be updated" + personObj);
@@ -118,15 +152,28 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    @Override
+    public void deletePersonById(Integer Id) {
+        try {
+            System.out.println("Person to be deleted" + Id);
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM salesforce.person__c  where id=?");
+            preparedStatement.setInt(1, Id);
+            preparedStatement.executeUpdate();
+            System.out.println("person deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public java.sql.Date convertJavaDateToSqlDate(java.util.Date dateToConvert) throws ParseException {
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         String formatted = format1.format(dateToConvert);
-        System.out.println("formatted date" + formatted);
+        //System.out.println("formatted date" + formatted);
 
         java.util.Date utilDate = format1.parse(formatted);
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        System.out.println("utilDate:" + utilDate);
-        System.out.println("sqlDate:" + sqlDate);
+        //System.out.println("utilDate:" + utilDate);
+        //System.out.println("sqlDate:" + sqlDate);
         return sqlDate;
     }
 

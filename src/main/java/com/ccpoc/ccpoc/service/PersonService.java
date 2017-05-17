@@ -9,4 +9,6 @@ public interface PersonService {
     List<Person> findAllUsers();
     Person findById(Integer Id);
     void updatePerson(Person personObj);
+    void deletePersonById(Integer Id);
+    void createPerson(Person personObj);
 }

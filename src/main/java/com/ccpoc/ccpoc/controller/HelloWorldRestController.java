@@ -1,5 +1,5 @@
 package com.ccpoc.ccpoc.controller;
- 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,31 +16,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ccpoc.ccpoc.model.Person;
 import com.ccpoc.ccpoc.service.PersonService;
- 
+
 @RestController
 @RequestMapping("/person")
 public class HelloWorldRestController {
- 
+
     @Autowired
     PersonService personService;  //Service which will do all data retrieval/manipulation work
- 
-    
+
     //-------------------Retrieve All Users--------------------------------------------------------
-     
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ResponseEntity<List<Person>> listAllUsers() {
         List<Person> users = personService.findAllUsers();
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return new ResponseEntity<List<Person>>(HttpStatus.NO_CONTENT);//You many decide to return HttpStatus.NOT_FOUND
         }
-        System.out.println("controller users "+users);
+        System.out.println("controller users " + users);
         return new ResponseEntity<List<Person>>(users, HttpStatus.OK);
     }
- 
- 
-    
+
     //-------------------Retrieve Single Person--------------------------------------------------------
-     
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Person> getUser(@PathVariable("id") Integer id) {
         System.out.println("Fetching User with id " + id);
@@ -51,69 +46,70 @@ public class HelloWorldRestController {
         }
         return new ResponseEntity<Person>(user, HttpStatus.OK);
     }
- 
-     
-     
+
     //-------------------Update a Person--------------------------------------------------------
     @RequestMapping(value = "/user", method = RequestMethod.POST)
-    public ResponseEntity<Void> createUser(@RequestBody Person user,    UriComponentsBuilder ucBuilder) {
-        System.out.println("Updating User " + user.getAutoNumberName());
-        personService.updatePerson(user);
+    public ResponseEntity<Void> createUser(@RequestBody Person personObj, UriComponentsBuilder ucBuilder) {
+        
+        if(personObj.getAutoNumberName()!= null && !personObj.getAutoNumberName().isEmpty())
+        {
+            System.out.println("Updating User " + personObj.getAutoNumberName());
+            personService.updatePerson(personObj);
+        }
+        else
+        {
+            System.out.println("inserting user "+personObj.getFullname());
+            personService.createPerson(personObj);
+        }
+        
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<Void>(headers, HttpStatus.OK);
     }
- 
-    
-     
-   /* //------------------- Update a Person --------------------------------------------------------
-     
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Person> updateUser(@PathVariable("id") long id, @RequestBody Person user) {
-        System.out.println("Updating User " + id);
-         
-        Person currentUser = userService.findById(id);
-         
-        if (currentUser==null) {
-            System.out.println("User with id " + id + " not found");
-            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
-        }
- 
-        currentUser.setUsername(user.getUsername());
-        currentUser.setAddress(user.getAddress());
-        currentUser.setEmail(user.getEmail());
-         
-        userService.updateUser(currentUser);
-        return new ResponseEntity<Person>(currentUser, HttpStatus.OK);
-    }
- 
-    
     
     //------------------- Delete a Person --------------------------------------------------------
+     @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+     public ResponseEntity<Person> deleteUser(@PathVariable("id") Integer id) {
+     System.out.println("Fetching & Deleting User with id " + id);
+ 
+     Person user = personService.findById(id);
+     if (user == null) {
+     System.out.println("Unable to delete. User with id " + id + " not found");
+     return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
+     }
+ 
+     personService.deletePersonById(id);
+     return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
+     }
+
+    /* //------------------- Update a Person --------------------------------------------------------
      
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Person> deleteUser(@PathVariable("id") long id) {
-        System.out.println("Fetching & Deleting User with id " + id);
+     @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
+     public ResponseEntity<Person> updateUser(@PathVariable("id") long id, @RequestBody Person user) {
+     System.out.println("Updating User " + id);
+         
+     Person currentUser = userService.findById(id);
+         
+     if (currentUser==null) {
+     System.out.println("User with id " + id + " not found");
+     return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
+     }
  
-        Person user = userService.findById(id);
-        if (user == null) {
-            System.out.println("Unable to delete. User with id " + id + " not found");
-            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
-        }
+     currentUser.setUsername(user.getUsername());
+     currentUser.setAddress(user.getAddress());
+     currentUser.setEmail(user.getEmail());
+         
+     userService.updateUser(currentUser);
+     return new ResponseEntity<Person>(currentUser, HttpStatus.OK);
+     }
  
-        userService.deleteUserById(id);
-        return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
-    }
- 
+     //------------------- Delete All Users --------------------------------------------------------
      
-    
-    //------------------- Delete All Users --------------------------------------------------------
-     
-    @RequestMapping(value = "/user", method = RequestMethod.DELETE)
-    public ResponseEntity<Person> deleteAllUsers() {
-        System.out.println("Deleting All Users");
+     @RequestMapping(value = "/user", method = RequestMethod.DELETE)
+     public ResponseEntity<Person> deleteAllUsers() {
+     System.out.println("Deleting All Users");
  
-        userService.deleteAllUsers();
-        return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
-    }
- */
+     userService.deleteAllUsers();
+     return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
+     }
+     */
 }
