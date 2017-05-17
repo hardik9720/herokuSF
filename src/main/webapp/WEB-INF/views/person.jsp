@@ -43,7 +43,7 @@
                         <div class="form-group col-md-12">
                             <label class="col-md-2 control-lable" for="description">Description</label>
                             <div class="col-md-7">
-                                <input type="text" ng-model="person.description"  id="description" class="form-control input-sm" readOnly="true"/>
+                                <input type="text" ng-model="person.description"  id="description" class="form-control input-sm" />
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <div class="form-group col-md-12">
                             <label class="col-md-2 control-lable" for="amount">Amount</label>
                             <div class="col-md-7">
-                                <input type="number"  id="amount" ng-model="person.amount" class="email form-control input-sm" readOnly="true"/>
+                                <input type="number"  id="amount" ng-model="person.amount" class="email form-control input-sm" />
                             </div>
                         </div>
                     </div>
@@ -60,6 +60,8 @@
                     <div class="row">
                         <div class="form-actions floatcenter">
                             <input type="submit"  value="Update" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid">
+                            &nbsp;
+                            <input type="submit"  value="Create" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid">
                         </div>
                     </div>
                 </form>
@@ -95,6 +97,8 @@
                             <td><span ng-bind="u.sfId"></span></td>
                             <td>
                                 <button type="button" ng-click="edit(u.id)" class="btn btn-success custom-width">Edit</button>  
+                                &nbsp;
+                                <button type="button" ng-click="delete(u.id)" class="btn btn-warning custom-width">Delete</button>
                             </td>
                         </tr>
                     </tbody>
