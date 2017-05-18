@@ -101,7 +101,7 @@ public class AddressServiceImpl implements AddressService {
         personList = getAllPersons();
         System.out.println("personList "+personList);
                 
-        String addressQuery = createQuery(getAllPersons().size());
+        String addressQuery = createQuery(personList.size());
         
         System.out.println("addressQuery " + addressQuery);
         List<Address> addressList = new ArrayList<Address>();
@@ -110,6 +110,7 @@ public class AddressServiceImpl implements AddressService {
             for (int i = 1; i <= personList.size(); i++) {
                 statement.setString(i, personList.get(personList.size() - 1).getSfId());
             }
+            System.out.println("statement "+statement.toString());
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
