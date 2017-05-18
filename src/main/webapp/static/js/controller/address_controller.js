@@ -27,6 +27,22 @@ App.controller('addressManagerController', function($scope, $http) {
                
     }
     
+    $scope.delete = function (id)
+    {
+        console.log('Address id' + id);
+        if (confirm("Are you sure to delete?"))
+        {
+            $http.delete(urlBase + '/address/delete/' + id)
+                .success(function (data) {
+                    $scope.getAllAddress();
+                    console.log('delete method called' + JSON.stringify(data));
+                    alert('Address Deleted Successfully.');
+                }).error(function (data) {
+                console.log('error ' + JSON.stringify(data));
+            });
+        }
+    }
+    
     $scope.submit = function() {
         console.log('form data' + JSON.stringify($scope.address));
         $http.post(urlBase + '/address/update',$scope.address).
@@ -38,4 +54,3 @@ App.controller('addressManagerController', function($scope, $http) {
     }
     
 });
-

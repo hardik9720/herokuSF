@@ -93,6 +93,8 @@
                             <td><span ng-bind="u.sfId"></span></td>
                             <td>
                                 <button type="button" ng-click="edit(u.id)" class="btn btn-success custom-width">Edit</button>  
+                                &nbsp;
+                                <button type="button" ng-click="delete(u.id)" class="btn btn-warning custom-width">Delete</button>  
                             </td>
                         </tr>
                     </tbody>
