@@ -99,7 +99,8 @@ public class AddressServiceImpl implements AddressService {
         
         List<Person> personList = new ArrayList<Person>();
         personList = getAllPersons();
-        
+        System.out.println("personList "+personList);
+                
         String addressQuery = createQuery(getAllPersons().size());
         
         System.out.println("addressQuery " + addressQuery);
