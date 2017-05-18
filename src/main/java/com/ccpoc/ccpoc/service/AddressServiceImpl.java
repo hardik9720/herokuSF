@@ -108,7 +108,7 @@ public class AddressServiceImpl implements AddressService {
         try {
             PreparedStatement statement = connection.prepareStatement(addressQuery);
             for (int i = 1; i <= personList.size(); i++) {
-                statement.setString(i, personList.get(personList.size() - 1).getSfId());
+                statement.setString(i, personList.get(personList.size() - i).getSfId());
             }
             System.out.println("statement "+statement.toString());
             ResultSet rs = statement.executeQuery();
