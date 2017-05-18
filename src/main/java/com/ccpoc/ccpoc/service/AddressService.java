@@ -8,4 +8,6 @@ public interface AddressService {
     List<Address> findAllAddress();
     Address findById(Integer Id);
     void updateAddress(Address addressObj);
+    void deleteAddressById(Integer Id);
+    
 }

@@ -55,68 +55,31 @@ public class AddressRestController {
         return new ResponseEntity<Address>(address, HttpStatus.OK);
     }
  
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Person> deleteUser(@PathVariable("id") Integer id) {
+        System.out.println("Fetching & Deleting Address with id " + id);
+ 
+        Address address = addressService.findById(id);
+        if (address == null) {
+            System.out.println("Unable to delete. address with id " + id + " not found");
+            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
+        }
+ 
+        addressService.deleteAddressById(id);
+        return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
+    }
      
-     
-    //-------------------Update a Person--------------------------------------------------------
+    //-------------------Update a Address--------------------------------------------------------
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<Void> createUser(@RequestBody Address address,    UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Void> createUpdateAddress(@RequestBody Address address,    UriComponentsBuilder ucBuilder) {
         System.out.println("Updating address " + address.getAutoNumberName());
-        addressService.updateAddress(address);
+        
+        if(address.getAutoNumberName()!= null && !address.getAutoNumberName().isEmpty())
+        {
+            System.out.println("Updating User " + address.getAutoNumberName());
+            addressService.updateAddress(address);
+        }
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<Void>(headers, HttpStatus.OK);
     }
- 
-    
-     
-   /* //------------------- Update a Person --------------------------------------------------------
-     
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Person> updateUser(@PathVariable("id") long id, @RequestBody Person user) {
-        System.out.println("Updating User " + id);
-         
-        Person currentUser = userService.findById(id);
-         
-        if (currentUser==null) {
-            System.out.println("User with id " + id + " not found");
-            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
-        }
- 
-        currentUser.setUsername(user.getUsername());
-        currentUser.setAddress(user.getAddress());
-        currentUser.setEmail(user.getEmail());
-         
-        userService.updateUser(currentUser);
-        return new ResponseEntity<Person>(currentUser, HttpStatus.OK);
-    }
- 
-    
-    
-    //------------------- Delete a Person --------------------------------------------------------
-     
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Person> deleteUser(@PathVariable("id") long id) {
-        System.out.println("Fetching & Deleting User with id " + id);
- 
-        Person user = userService.findById(id);
-        if (user == null) {
-            System.out.println("Unable to delete. User with id " + id + " not found");
-            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
-        }
- 
-        userService.deleteUserById(id);
-        return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
-    }
- 
-     
-    
-    //------------------- Delete All Users --------------------------------------------------------
-     
-    @RequestMapping(value = "/user", method = RequestMethod.DELETE)
-    public ResponseEntity<Person> deleteAllUsers() {
-        System.out.println("Deleting All Users");
- 
-        userService.deleteAllUsers();
-        return new ResponseEntity<Person>(HttpStatus.NO_CONTENT);
-    }
- */
 }

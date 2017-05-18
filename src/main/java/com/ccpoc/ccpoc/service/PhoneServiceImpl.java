@@ -64,7 +64,7 @@ public class PhoneServiceImpl implements PhoneService {
         List<Phone> phoneList = new ArrayList<Phone>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from salesforce.phone__c where person__c = '"+person.getSfId()+"'");
+            ResultSet rs = statement.executeQuery("select * from salesforce.phones__c where person__c = '"+person.getSfId()+"'");
             while (rs.next()) {
                 Phone phone = new Phone();
                 phone.setId(rs.getInt("id"));
@@ -107,7 +107,7 @@ public class PhoneServiceImpl implements PhoneService {
     public void updatePhone(Phone phoneObj) {
         try {
             System.out.println("Phone to be updated" + phoneObj);
-            PreparedStatement preparedStatement = connection.prepareStatement("update salesforce.phone__c set type__c=?,phone__c=? where id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("update salesforce.phones__c set type__c=?,phone__c=? where id=?");
             preparedStatement.setString(1, phoneObj.getType());
             preparedStatement.setString(2, phoneObj.getPhone());
             preparedStatement.setLong(3, phoneObj.getId());
