@@ -35,11 +35,9 @@ public class PhoneServiceImpl implements PhoneService {
     public PhoneServiceImpl() throws URISyntaxException {
         connection = DBUtility.getConnection();
     }
-
-    @Override
-    public List<Phone> findAllPhones() {
-        
-                User userObj = new User();
+    
+    public User getLoggedInUser() {
+        User userObj = new User();
         // check if user is login
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth instanceof AnonymousAuthenticationToken)) {
@@ -48,23 +46,71 @@ public class PhoneServiceImpl implements PhoneService {
             userObj = userDao.findByUserName(userDetail.getUsername());
         }
 
-        Person person = new Person();
+        return userObj;
+    }
+    
+    public String getPersonSFIDs(List<Person> personList) {
+        StringBuilder ids = new StringBuilder();
+        for (int i = 0; i < personList.size(); i++) {
+            ids.append("'" + personList.get(i).getSfId() + "'");
+            if (i < personList.size() - 1) {
+                ids.append(",");
+            }
+        }
+
+        return ids.toString();
+    }
+    
+    public List<Person> getAllPersons() {
+        User userObj = getLoggedInUser();
+        List<Person> personList = new ArrayList<Person>();
         try {
             Statement personStatement = connection.createStatement();
-            
-            ResultSet rs = personStatement.executeQuery("select sfid from salesforce.person__c where custom_user__c= '"+ userObj.getsfId() +"'");
+
+            ResultSet rs = personStatement.executeQuery("select sfid from salesforce.person__c where custom_user__c= '" + userObj.getsfId() + "' ");
             while (rs.next()) {
-                person.setSfId(rs.getString("sfid"));
+                Person personObj = new Person();
+                personObj.setSfId(rs.getString("sfid"));
+                personList.add(personObj);
             }
         } catch (SQLException ex) {
             Logger.getLogger(AddressServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return personList;
+    }
+    
+    private static String createQuery(int length) {
+        String query = "select * from salesforce.phones__c where person__c IN (";
+        StringBuilder queryBuilder = new StringBuilder(query);
+        for (int i = 0; i < length; i++) {
+            queryBuilder.append(" ?");
+            if (i != length - 1) {
+                queryBuilder.append(",");
+            }
+        }
+        queryBuilder.append(")");
+        return queryBuilder.toString();
+    }
 
-        
+    @Override
+    public List<Phone> findAllPhones() {
+
+        User userObj = getLoggedInUser();
+
+        List<Person> personList = new ArrayList<Person>();
+        personList = getAllPersons();
+        System.out.println("personList "+personList);
+                
+        String phonesQuery = createQuery(personList.size());
+
         List<Phone> phoneList = new ArrayList<Phone>();
         try {
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("select * from salesforce.phones__c where person__c = '"+person.getSfId()+"'");
+            PreparedStatement statement = connection.prepareStatement(phonesQuery);
+            for (int i = 1; i <= personList.size(); i++) {
+                statement.setString(i, personList.get(personList.size() - i).getSfId());
+            }
+            System.out.println("statement "+statement.toString());
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Phone phone = new Phone();
                 phone.setId(rs.getInt("id"));
